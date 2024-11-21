@@ -1,5 +1,5 @@
-import { ServerMetadata } from "@tinyrpc/server";
-import { Constructor } from "../types/mod.ts";
+import type { ServerMetadata } from "@tinyrpc/server";
+import type { Constructor } from "../types/mod.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
 import { getStructure } from "./get-structure.util.ts";
 
