@@ -1,0 +1,13 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "{{PROJECT_VERSION}}",
+  "tasks": {},
+  "imports": {
+    "@tinyrpc/sdk-core": "jsr:@tinyrpc/sdk-core@^0.1.x",
+    "@online/tinyserializers": "jsr:@online/tinyserializers@^0.0.x"
+  },
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
