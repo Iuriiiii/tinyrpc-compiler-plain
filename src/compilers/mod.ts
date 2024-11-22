@@ -30,6 +30,7 @@ export function compilePackage(options: CompilerOptions) {
   for (const structure of structures) {
     const { name: structureName, constructor: structureConstructor } = structure;
 
+    /** If the structure is a module, then ignore it. */
     if (options.metadata.modules.find((m) => m.constructor === structureConstructor)) {
       continue;
     }
