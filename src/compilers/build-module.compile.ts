@@ -36,7 +36,7 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const methodsMapper = () => (method: MethodMetadata) => buildMethod(module, method, imports, interfaces, options);
 
   const constructorParamNames = constructorParams.map((m) => `this.${m.name}`).join(", ");
-  const constructor = constructorParams.length ? `constructor(${compiledConstructorParams}){${isSerializable ? "super();" : ""}` : "";
+  const constructor = constructorParams.length ? `constructor(${compiledConstructorParams}){${isSerializable ? "super();" : ""}}` : "";
   const memberNames = members.map((m) => m.name);
   const membersObject = memberNames.map((memberName) => `${memberName}: this.${memberName}`).join(",\n");
   const buildedMethods = methods.map(methodsMapper()).join("\n\n");
@@ -46,7 +46,7 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
 
   const compiledImportPath = `import { ${compiledImports} } from "../structures/mod.ts"`;
   const _extends = isSerializable ? "extends SerializableClass " : "";
-
+  const serializableImports = isSerializable ? "type SerializableClass, type SerializedClass" : "";
   const serializableMethod = !isSerializable ? "" : `
   public override serialize(): SerializedClass<typeof ${moduleName}> {
     return {
@@ -63,7 +63,8 @@ import {
   MethodResponse,
   RequestBody,
   rawRpc as rpc,
-  MapStructure
+  MapStructure,
+  ${serializableImports}
 } from "@tinyrpc/sdk-core";
 ${compiledImportPath}
 
