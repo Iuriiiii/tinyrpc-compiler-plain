@@ -33,7 +33,7 @@ export function buildStructure(
     .join("\n");
 
   const memberNames = members.map((m) => m.name);
-  const constructorParamNames = constructorParams.map((m) => m.name).join(", ");
+  const constructorParamNames = constructorParams.map((m) => `this.${m.name}`).join(", ");
   const membersObject = memberNames.map((memberName) => `${memberName}: this.${memberName}`).join(",\n");
   const constructor = constructorParams.length ? `constructor(${compiledConstructorParams}){super();}` : "";
 

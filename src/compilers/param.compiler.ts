@@ -23,5 +23,5 @@ export function paramCompiler(
     buildImports.push(buildType);
   }
 
-  return `${makePrivate}readonly${memberName}: ${buildType}${makeNullable}`;
+  return `${makePrivate}readonly ${memberName}: ${buildType}${makeNullable}`;
 }
