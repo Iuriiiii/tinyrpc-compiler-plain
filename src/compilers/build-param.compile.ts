@@ -1,5 +1,6 @@
 import type { CompilerOptions, ParameterMetadata } from "@tinyrpc/server";
-import { getTypescriptType } from "../utils/mod.ts";
+import type { Import } from "../interfaces/mod.ts";
+import { getTypescriptType, pushTypeIfNeeded } from "../utils/mod.ts";
 
 export function getParamName(param: ParameterMetadata) {
   const { index } = param;
@@ -10,28 +11,20 @@ export function getParamName(param: ParameterMetadata) {
 
 export function buildParam(
   param: ParameterMetadata,
-  buildImports: string[],
+  buildImports: Import[],
   options: CompilerOptions,
 ) {
   const paramName = getParamName(param);
   const { dataType } = param;
-  const { typescriptType: buildType, requireImport } = getTypescriptType(
+  const typeResult = getTypescriptType(
     dataType,
     options.metadata,
   );
+
+  const { typescriptType: buildType } = typeResult;
   const sign = param.optional ? "?" : "";
 
-  if (requireImport && !buildImports.includes(buildType)) {
-    buildImports.push(buildType);
-  }
-
-  // if (!buildType) {
-  //   if (!(type instanceof Serializable)) {
-  //     throw new Error(`Unknown type: ${type}`);
-  //   }
-
-  //   // TODO: Do something with serializable parameter
-  // }
+  pushTypeIfNeeded(typeResult, buildImports, options);
 
   const output = `${paramName}${sign}: ${buildType}`.trim();
 

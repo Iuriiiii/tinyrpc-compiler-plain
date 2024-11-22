@@ -1,7 +1,8 @@
 import type { ServerMetadata } from "@tinyrpc/server";
 import type { Constructor } from "../types/mod.ts";
-import { getConstructorName } from "./get-constructor-name.util.ts";
+import type { GetTypescriptTypeResult } from "../interfaces/mod.ts";
 import { getStructure } from "./get-structure.util.ts";
+import { getConstructorName } from "./get-constructor-name.util.ts";
 
 const TypesToTSTypes = {
   // @ts-ignore: Allow custom key
@@ -47,11 +48,6 @@ const TypesToTSTypes = {
   // @ts-ignore: Allow custom key
   "Set": "Set<unknown>",
 };
-
-interface GetTypescriptTypeResult {
-  typescriptType: string;
-  requireImport?: boolean;
-}
 
 export function getTypescriptType(
   value: Constructor | string | null | undefined,

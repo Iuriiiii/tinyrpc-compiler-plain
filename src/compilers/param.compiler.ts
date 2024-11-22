@@ -1,9 +1,10 @@
-import { getTypescriptType } from "../utils/mod.ts";
+import type { Import } from "../interfaces/mod.ts";
 import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server";
+import { getTypescriptType, pushTypeIfNeeded } from "../utils/mod.ts";
 
 export function paramCompiler(
   member: MemberMetadata,
-  buildImports: string[],
+  buildImports: Import[],
   options: CompilerOptions,
 ) {
   const {
@@ -12,16 +13,16 @@ export function paramCompiler(
     private: isPrivate,
     nullable,
   } = member;
-  const { typescriptType: buildType, requireImport } = getTypescriptType(
+  const typeResult = getTypescriptType(
     dataType,
     options.metadata,
   );
+
+  const { typescriptType: buildType } = typeResult;
   const makePrivate = isPrivate ? "private " : "public ";
   const makeNullable = nullable ? " | null" : "";
 
-  if (requireImport && !buildImports.includes(buildType)) {
-    buildImports.push(buildType);
-  }
+  pushTypeIfNeeded(typeResult, buildImports, options);
 
   return `${makePrivate}readonly ${memberName}: ${buildType}${makeNullable}`;
 }

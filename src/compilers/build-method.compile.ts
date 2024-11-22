@@ -1,7 +1,7 @@
 import type { CompilerOptions, MethodMetadata, ModuleMetadata, ParameterMetadata } from "@tinyrpc/server";
-
+import type { Import } from "../interfaces/mod.ts";
 import { buildParam, getParamName } from "./build-param.compile.ts";
-import { camelToPascal, getTypescriptType } from "../utils/mod.ts";
+import { camelToPascal, getTypescriptType, pushTypeIfNeeded } from "../utils/mod.ts";
 
 function sortMethodParams(a: ParameterMetadata, b: ParameterMetadata) {
   return a.index - b.index;
@@ -10,16 +10,18 @@ function sortMethodParams(a: ParameterMetadata, b: ParameterMetadata) {
 export function buildMethod(
   module: ModuleMetadata,
   method: MethodMetadata,
-  buildImports: string[],
+  buildImports: Import[],
   interfaces: string[],
   options: CompilerOptions,
 ) {
   const moduleName = module.moduleName ?? module.name;
   const { name: methodName, links = [] } = method;
-  const { typescriptType: returnType, requireImport } = getTypescriptType(
+  const typeResult = getTypescriptType(
     method.returnType,
     options.metadata,
   );
+
+  const { typescriptType: returnType } = typeResult;
   const generics = method.generics ? `<${method.generics.join(", ")}>` : "";
   const makeVoid = returnType === "void" ? "void " : "";
   const paramNames = method.params.map(getParamName).reverse().join(", ");
@@ -50,9 +52,7 @@ export function buildMethod(
     ${_return}
 }`;
 
-  if (requireImport && !buildImports.includes(returnType)) {
-    buildImports.push(returnType);
-  }
+  pushTypeIfNeeded(typeResult, buildImports, options);
 
   interfaces.push(`interface ${interfaceName}{${buildedParams}}`);
   return output;
