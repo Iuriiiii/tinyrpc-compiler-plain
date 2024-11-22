@@ -11,7 +11,7 @@ export function buildStructure(
   const imports: string[] = [];
   const { name, members: allMembers } = structure;
   const members = allMembers
-    .filter((m) => !!m.constructorParam);
+    .filter((m) => isUndefined(m.constructorParam));
 
   const compiledMembers = members
     .map((m) => buildMember(m, imports, options))
