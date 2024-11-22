@@ -1,4 +1,4 @@
-import type { CompilerOptions, MethodMetadata, ModuleMetadata } from "@tinyrpc/server";
+import { type CompilerOptions, type MethodMetadata, type ModuleMetadata, SerializableClass } from "@tinyrpc/server";
 import { buildMember } from "./build-member.compile.ts";
 import { buildMethod } from "./build-method.compile.ts";
 import { isUndefined } from "jsr:@online/is@0.0";
@@ -9,10 +9,7 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const imports: string[] = [];
   const interfaces: string[] = [];
   const { name: moduleName, methods, members: allMembers } = module;
-
-  const isSerializable = !!options.metadata.structures.find(
-    (s) => s.constructor === module.constructor,
-  );
+  const isSerializable = module.constructor.prototype instanceof SerializableClass;
 
   const members = allMembers
     .filter((m) => isUndefined(m.constructorParam));
@@ -39,7 +36,7 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const methodsMapper = () => (method: MethodMetadata) => buildMethod(module, method, imports, interfaces, options);
 
   const constructorParamNames = constructorParams.map((m) => `this.${m.name}`).join(", ");
-  const constructor = constructorParams.length ? `constructor(${compiledConstructorParams}){super();}` : "";
+  const constructor = constructorParams.length ? `constructor(${compiledConstructorParams}){${isSerializable ? "super();" : ""}` : "";
   const memberNames = members.map((m) => m.name);
   const membersObject = memberNames.map((memberName) => `${memberName}: this.${memberName}`).join(",\n");
   const buildedMethods = methods.map(methodsMapper()).join("\n\n");
@@ -68,7 +65,6 @@ import {
   rawRpc as rpc,
   MapStructure
 } from "@tinyrpc/sdk-core";
-${compiledStructureImports}
 ${compiledImportPath}
 
 ${buildedInterfaces}
