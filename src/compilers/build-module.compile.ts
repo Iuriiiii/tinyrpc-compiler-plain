@@ -3,7 +3,6 @@ import { buildMember } from "./build-member.compile.ts";
 import { buildMethod } from "./build-method.compile.ts";
 import { isUndefined } from "jsr:@online/is@0.0";
 import { paramCompiler } from "./param.compiler.ts";
-import { toFilename } from "../utils/mod.ts";
 
 export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const imports: string[] = [];
@@ -25,13 +24,6 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const compiledConstructorParams = constructorParams
     .map((m) => paramCompiler(m, imports, options))
     .join(", ");
-
-  const compiledStructureImports = imports
-    .map((i) => {
-      const compiledImportPath = `./${toFilename(i, "structure")}`;
-      return `import { ${i} } from "${compiledImportPath}";`;
-    })
-    .join("\n");
 
   const methodsMapper = () => (method: MethodMetadata) => buildMethod(module, method, imports, interfaces, options);
 
