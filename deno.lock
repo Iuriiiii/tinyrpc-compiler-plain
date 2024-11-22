@@ -126,6 +126,17 @@
         "jsr:@std/http",
         "jsr:@tinyrpc/sdk-core"
       ]
+    },
+    "@tinyrpc/server@0.1.16": {
+      "integrity": "1e269d89f132a7ea60c44f05c337788bfa4a19bb95415dce6f987af1e823f89d",
+      "dependencies": [
+        "jsr:@dx/reflect",
+        "jsr:@online/packager",
+        "jsr:@online/tinyserializers",
+        "jsr:@std/assert",
+        "jsr:@std/http",
+        "jsr:@tinyrpc/sdk-core"
+      ]
     }
   }
 }
