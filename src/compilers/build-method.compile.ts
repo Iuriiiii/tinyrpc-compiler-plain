@@ -1,9 +1,4 @@
-import type {
-  CompilerOptions,
-  MethodMetadata,
-  ModuleMetadata,
-  ParameterMetadata,
-} from "@tinyrpc/server";
+import type { CompilerOptions, MethodMetadata, ModuleMetadata, ParameterMetadata } from "@tinyrpc/server";
 
 import { buildParam, getParamName } from "./build-param.compile.ts";
 import { camelToPascal, getTypescriptType } from "../utils/mod.ts";
@@ -35,11 +30,8 @@ export function buildMethod(
     .map((p) => buildParam(p, buildImports, options))
     .join("; ");
   const interfaceName = `${camelToPascal(methodName)}Params`;
-  const _return = makeVoid
-    ? `return { ...response, result: void 0 };`
-    : `return response;`;
-  const output =
-    `async ${methodName}${generics}({${paramNames}}: ${interfaceName}${buildOptionalFirstArgument}, request: RequestBody = {}): Promise<MethodResponse<${returnType}>> {
+  const _return = makeVoid ? `return { ...response, result: void 0 };` : `return response;`;
+  const output = `async ${methodName}${generics}({${paramNames}}: ${interfaceName}${buildOptionalFirstArgument}, request: RequestBody = {}): Promise<MethodResponse<${returnType}>> {
     const argument = {
       connection: {
         module: "${moduleName}",

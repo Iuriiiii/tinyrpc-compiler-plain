@@ -1,9 +1,4 @@
-import {
-  formatFolder,
-  randomString,
-  toFilename,
-  writeFile,
-} from "../utils/mod.ts";
+import { formatFolder, randomString, toFilename, writeFile } from "../utils/mod.ts";
 import { buildModule } from "./build-module.compile.ts";
 import sdkDenoJson from "../assets/deno.json" with { type: "json" };
 import { buildStructure } from "./build-structure.compile.ts";
@@ -33,7 +28,11 @@ export function compilePackage(options: CompilerOptions) {
   createPackageFolder(structurePath);
 
   for (const structure of structures) {
-    const { name: structureName } = structure;
+    const { name: structureName, constructor: structureConstructor } = structure;
+
+    if (options.metadata.modules.find((m) => m.constructor === structureConstructor)) {
+      continue;
+    }
 
     writeFile(
       `${structurePath}/${toFilename(structureName, "structure")}`,
@@ -43,9 +42,7 @@ export function compilePackage(options: CompilerOptions) {
 
   writeFile(
     `${structurePath}/mod.ts`,
-    structures.map((structure) =>
-      `export * from "./${toFilename(structure.name, "structure")}";`
-    ).join("\n"),
+    structures.map((structure) => `export * from "./${toFilename(structure.name, "structure")}";`).join("\n"),
   );
 
   createPackageFolder(apiPath);
@@ -61,18 +58,12 @@ export function compilePackage(options: CompilerOptions) {
 
   writeFile(
     `${apiPath}/mod.ts`,
-    modules.map((module) =>
-      `export * from "./${toFilename(module.name, "api")}";`
-    ).join("\n"),
+    modules.map((module) => `export * from "./${toFilename(module.name, "api")}";`).join("\n"),
   );
 
   const modApi = modules.length ? 'export * from "./api/mod.ts";' : "";
-  const modStructures = structures.length
-    ? 'export * from "./structures/mod.ts";'
-    : "";
-  const host = `http://${server?.hostname ?? "127.0.0.1"}:${
-    server?.port ?? "8000"
-  }/`;
+  const modStructures = structures.length ? 'export * from "./structures/mod.ts";' : "";
+  const host = `http://${server?.hostname ?? "127.0.0.1"}:${server?.port ?? "8000"}/`;
 
   writeFile(
     `${path}/mod.ts`,
