@@ -4,6 +4,7 @@ import { buildMember } from "./build-member.compile.ts";
 import { buildMethod } from "./build-method.compile.ts";
 import { isUndefined } from "jsr:@online/is@0.0";
 import { paramCompiler } from "./param.compiler.ts";
+import { importCompiler } from "./import.compiler.ts";
 
 export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const imports: Import[] = [];
@@ -34,10 +35,8 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const membersObject = memberNames.map((memberName) => `${memberName}: this.${memberName}`).join(",\n");
   const buildedMethods = methods.map(methodsMapper()).join("\n\n");
   const buildedInterfaces = interfaces.join("\n");
-  const compiledImports = imports
-    .join(", ");
+  const compiledImports = importCompiler(imports);
 
-  const compiledImportPath = `import { ${compiledImports} } from "../structures/mod.ts"`;
   const _extends = isSerializable ? "extends SerializableClass " : "";
   const serializableImports = isSerializable ? "SerializableClass, type SerializedClass, Serializable" : "";
   const serializableMethod = !isSerializable ? "" : `
@@ -59,7 +58,7 @@ import {
   MapStructure,
   ${serializableImports}
 } from "@tinyrpc/sdk-core";
-${compiledImportPath}
+${compiledImports}
 
 ${buildedInterfaces}
 
