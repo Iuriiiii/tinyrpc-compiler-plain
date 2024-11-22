@@ -70,6 +70,9 @@ export function compilePackage(options: CompilerOptions) {
   const modStructures = structures.length
     ? 'export * from "./structures/mod.ts";'
     : "";
+  const host = `http://${server?.hostname ?? "127.0.0.1"}:${
+    server?.port ?? "8000"
+  }/`;
 
   writeFile(
     `${path}/mod.ts`,
@@ -78,9 +81,12 @@ export function compilePackage(options: CompilerOptions) {
       modStructures,
       'import { configSdk } from "@tinyrpc/sdk-core";',
       'import { dateSerializer, dateDeserializer } from "@online/tinyserializers";',
-      `configSdk({ host: "${
-        server?.hostname ?? "http://127.0.0.1/"
-      }", https: false, serializers: [dateSerializer], deserializers: [dateDeserializer] });`,
+      `configSdk({
+        host: "${host}",
+        https: false,
+        serializers: [dateSerializer],
+        deserializers: [dateDeserializer]
+      });`,
     ].join("\n"),
   );
 
