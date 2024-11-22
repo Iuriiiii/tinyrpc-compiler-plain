@@ -1,14 +1,16 @@
+import type { CompilerOptions, StructureMetadata } from "@tinyrpc/server";
+import type { Import } from "../interfaces/mod.ts";
 import { isUndefined } from "jsr:@online/is@0.0";
 import { toFilename } from "../utils/mod.ts";
 import { buildMember } from "./build-member.compile.ts";
-import type { CompilerOptions, StructureMetadata } from "@tinyrpc/server";
 import { paramCompiler } from "./param.compiler.ts";
+import { importCompiler } from "./import.compiler.ts";
 
 export function buildStructure(
   structure: StructureMetadata,
   options: CompilerOptions,
 ) {
-  const imports: string[] = [];
+  const imports: Import[] = [];
   const { name, members: allMembers } = structure;
   const members = allMembers
     .filter((m) => isUndefined(m.constructorParam));
@@ -25,11 +27,7 @@ export function buildStructure(
     .map((m) => paramCompiler(m, imports, options))
     .join(", ");
 
-  const compiledImports = imports
-    .map((i) => {
-      const compiledImportPath = `./${toFilename(i, "structure")}`;
-      return `import { ${i} } from "${compiledImportPath}";`;
-    })
+  const compiledImports = importCompiler(imports)
     .join("\n");
 
   const memberNames = members.map((m) => m.name);

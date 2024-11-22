@@ -1,9 +1,10 @@
-import { getTypescriptType } from "../utils/mod.ts";
+import type { Import } from "../interfaces/mod.ts";
 import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server";
+import { getTypescriptType, importContains, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 
 export function buildMember(
   member: MemberMetadata,
-  buildImports: string[],
+  buildImports: Import[],
   options: CompilerOptions,
 ) {
   const {
@@ -15,20 +16,20 @@ export function buildMember(
     nullable,
     readonly,
   } = member;
-  const { typescriptType: buildType, requireImport } = getTypescriptType(
+  const typeResult = getTypescriptType(
     dataType,
     options.metadata,
   );
-  const makeOptional = optional ? "?" : "";
-  const makeDefaultValue = defaultValue !== undefined ? ` = ${defaultValue}` : "";
-  const makePrivate = isPrivate ? "private " : "public ";
-  const makeNullable = nullable ? " | null" : "";
-  const makeLateInit = defaultValue === undefined && !optional ? "!" : "";
-  const makeReadonly = readonly ? "readonly " : "";
 
-  if (requireImport && !buildImports.includes(buildType)) {
-    buildImports.push(buildType);
-  }
+  const { typescriptType: buildType } = typeResult;
+  const makeOptional = sassert(optional && "?");
+  const makeDefaultValue = sassert(defaultValue !== undefined && ` = ${defaultValue}`);
+  const makePrivate = sassert(isPrivate && "private ", "public ");
+  const makeNullable = sassert(nullable && " | null");
+  const makeLateInit = sassert(defaultValue === undefined && !optional && "!");
+  const makeReadonly = sassert(readonly && "readonly ");
+
+  pushTypeIfNeeded(typeResult, buildImports, options);
 
   return `${makePrivate}${makeReadonly}${memberName}${makeOptional}${makeLateInit}: ${buildType}${makeDefaultValue}${makeNullable}`;
 }

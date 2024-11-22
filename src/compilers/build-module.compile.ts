@@ -1,11 +1,12 @@
 import { type CompilerOptions, type MethodMetadata, type ModuleMetadata, SerializableClass } from "@tinyrpc/server";
+import type { Import } from "../interfaces/mod.ts";
 import { buildMember } from "./build-member.compile.ts";
 import { buildMethod } from "./build-method.compile.ts";
 import { isUndefined } from "jsr:@online/is@0.0";
 import { paramCompiler } from "./param.compiler.ts";
 
 export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
-  const imports: string[] = [];
+  const imports: Import[] = [];
   const interfaces: string[] = [];
   const { name: moduleName, methods, members: allMembers } = module;
   const isSerializable = module.constructor.prototype instanceof SerializableClass;
