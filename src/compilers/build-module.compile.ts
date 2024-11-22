@@ -46,7 +46,7 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
 
   const compiledImportPath = `import { ${compiledImports} } from "../structures/mod.ts"`;
   const _extends = isSerializable ? "extends SerializableClass " : "";
-  const serializableImports = isSerializable ? "type SerializableClass, type SerializedClass" : "";
+  const serializableImports = isSerializable ? "SerializableClass, type SerializedClass, Serializable" : "";
   const serializableMethod = !isSerializable ? "" : `
   public override serialize(): SerializedClass<typeof ${moduleName}> {
     return {
@@ -57,7 +57,7 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
 `;
 
   const output = `
-// deno-lint-ignore-file no-empty-interface
+// deno-lint-ignore-file
 import {
   HttpError,
   MethodResponse,
@@ -70,6 +70,7 @@ ${compiledImportPath}
 
 ${buildedInterfaces}
 
+${isSerializable ? "@Serializable()" : ""}
 export class ${moduleName} ${_extends}{
     ${compiledMembers}
     ${constructor}
