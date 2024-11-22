@@ -21,7 +21,7 @@ export function buildMethod(
     options.metadata,
   );
 
-  const { typescriptType: returnType, requireImport } = typeResult;
+  const { typescriptType: returnType } = typeResult;
   const generics = method.generics ? `<${method.generics.join(", ")}>` : "";
   const makeVoid = returnType === "void" ? "void " : "";
   const paramNames = method.params.map(getParamName).reverse().join(", ");

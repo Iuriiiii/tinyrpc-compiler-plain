@@ -1,6 +1,6 @@
 import type { Import } from "../interfaces/mod.ts";
 import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server";
-import { getTypescriptType, importContains, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
+import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 
 export function buildMember(
   member: MemberMetadata,
