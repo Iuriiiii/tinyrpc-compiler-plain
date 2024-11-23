@@ -4,6 +4,7 @@ import { isUndefined } from "jsr:@online/is@0.0";
 import { buildMember } from "./build-member.compile.ts";
 import { paramCompiler } from "./param.compiler.ts";
 import { importCompiler } from "./import.compiler.ts";
+import { sassert } from "../utils/mod.ts";
 
 export function buildStructure(
   structure: StructureMetadata,
@@ -32,7 +33,7 @@ export function buildStructure(
   const memberNames = members.map((m) => m.name);
   const constructorParamNames = constructorParams.map((m) => `this.${m.name}`).join(", ");
   const membersObject = memberNames.map((memberName) => `${memberName}: this.${memberName}`).join(",\n");
-  const constructor = constructorParams.length ? `constructor(${compiledConstructorParams}){super();}` : "";
+  const constructor = sassert(constructorParams.length > 0 && `constructor(${compiledConstructorParams}){super();}`);
 
   const output = `
 import { Serializable, SerializableClass, SerializedClass } from "@tinyrpc/sdk-core";

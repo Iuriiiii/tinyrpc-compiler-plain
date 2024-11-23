@@ -11,6 +11,7 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const interfaces: string[] = [];
   const { name: moduleName, methods, members: allMembers } = module;
   const isSerializable = module.constructor.prototype instanceof SerializableClass;
+  const methodsMapper = () => (method: MethodMetadata) => buildMethod(module, method, imports, interfaces, options);
 
   const members = allMembers
     .filter((m) => isUndefined(m.constructorParam));
@@ -27,15 +28,13 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
     .map((m) => paramCompiler(m, imports, options))
     .join(", ");
 
-  const methodsMapper = () => (method: MethodMetadata) => buildMethod(module, method, imports, interfaces, options);
-
   const constructorParamNames = constructorParams.map((m) => `this.${m.name}`).join(", ");
   const constructor = constructorParams.length ? `constructor(${compiledConstructorParams}){${isSerializable ? "super();" : ""}}` : "";
   const memberNames = members.map((m) => m.name);
   const membersObject = memberNames.map((memberName) => `${memberName}: this.${memberName}`).join(",\n");
   const buildedMethods = methods.map(methodsMapper()).join("\n\n");
   const buildedInterfaces = interfaces.join("\n");
-  const compiledImports = importCompiler(imports);
+  const compiledImports = importCompiler(imports).join("");
 
   const _extends = isSerializable ? "extends SerializableClass " : "";
   const serializableImports = isSerializable ? "SerializableClass, type SerializedClass, Serializable" : "";

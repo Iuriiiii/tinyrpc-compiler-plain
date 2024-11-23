@@ -5,7 +5,7 @@ import { toFilename } from "./to-filename.util.ts";
 
 export function pushImport(type: string, imports: Import[], options: CompilerOptions) {
   const isModule = !!getModule(type, options.metadata);
-  const fileName = toFilename(type, isModule ? "module" : "structure");
+  const fileName = toFilename(type, isModule ? "api" : "structure");
   const item: Import = {
     type,
     fileName,
