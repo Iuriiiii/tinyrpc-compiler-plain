@@ -34,7 +34,7 @@ export function buildModule(module: ModuleMetadata, options: CompilerOptions) {
   const membersObject = memberNames.map((memberName) => `${memberName}: this.${memberName}`).join(",\n");
   const buildedMethods = methods.map(methodsMapper()).join("\n\n");
   const buildedInterfaces = interfaces.join("\n");
-  const compiledImports = importCompiler(imports);
+  const compiledImports = importCompiler(imports).join("");
 
   const _extends = isSerializable ? "extends SerializableClass " : "";
   const serializableImports = isSerializable ? "SerializableClass, type SerializedClass, Serializable" : "";
