@@ -27,6 +27,8 @@ export function compilePackage(options: CompilerOptions) {
   createPackageFolder(path);
   createPackageFolder(structurePath);
 
+  let structuresMod = "";
+
   for (const structure of structures) {
     const { name: structureName, constructor: structureConstructor } = structure;
 
@@ -39,11 +41,13 @@ export function compilePackage(options: CompilerOptions) {
       `${structurePath}/${toFilename(structureName, "structure")}`,
       buildStructure(structure, options),
     );
+
+    structuresMod += `export * from "./${toFilename(structure.name, "structure")}";`;
   }
 
   writeFile(
     `${structurePath}/mod.ts`,
-    structures.map((structure) => `export * from "./${toFilename(structure.name, "structure")}";`).join("\n"),
+    structuresMod,
   );
 
   createPackageFolder(apiPath);
