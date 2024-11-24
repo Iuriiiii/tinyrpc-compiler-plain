@@ -2,7 +2,7 @@ import type { Import } from "../interfaces/mod.ts";
 import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server";
 import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 
-export function buildMember(
+export function memberCompiler(
   member: MemberMetadata,
   buildImports: Import[],
   options: CompilerOptions,
@@ -21,7 +21,7 @@ export function buildMember(
     options.metadata,
   );
 
-  const { typescriptType: buildType } = typeResult;
+  const { tsType: buildType } = typeResult;
   const makeOptional = sassert(optional && "?");
   const makeDefaultValue = sassert(defaultValue !== undefined && ` = ${defaultValue}`);
   const makePrivate = sassert(isPrivate && "private ", "public ");

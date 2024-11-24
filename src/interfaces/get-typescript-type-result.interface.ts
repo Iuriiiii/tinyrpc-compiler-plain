@@ -1,4 +1,5 @@
 export interface GetTypescriptTypeResult {
-  typescriptType: string;
+  tsType: string;
+  postfix: string;
   requireImport?: boolean;
 }

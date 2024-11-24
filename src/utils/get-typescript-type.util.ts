@@ -1,8 +1,9 @@
-import type { ServerMetadata } from "@tinyrpc/server";
+import type { DataType, ServerMetadata } from "@tinyrpc/server";
 import type { Constructor } from "../types/mod.ts";
 import type { GetTypescriptTypeResult } from "../interfaces/mod.ts";
 import { getStructure } from "./get-structure.util.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
+import { isArray } from "jsr:@online/is@0.0";
 
 const TypesToTSTypes = {
   // @ts-ignore: Allow custom key
@@ -50,33 +51,56 @@ const TypesToTSTypes = {
 };
 
 export function getTypescriptType(
-  value: Constructor | string | null | undefined,
+  value: DataType,
   instances: ServerMetadata,
 ): GetTypescriptTypeResult {
+  let postfix = "";
+  let wasArrayOrFunction = false;
+
+  while (isArray(value)) {
+    value = value[0] as DataType;
+    postfix += "[]";
+    wasArrayOrFunction = true;
+  }
+
+  // Is a common function
+  while (typeof value === "function" && value.name.length === 0) {
+    value = (value as () => unknown)() as DataType;
+    wasArrayOrFunction = true;
+  }
+
+  if (wasArrayOrFunction) {
+    const result = getTypescriptType(value, instances);
+
+    return { ...result, tsType: `${result.tsType}${postfix}` };
+  }
+
   // @ts-ignore: Just translate type constructor to ts type
   const tsType: string | undefined = TypesToTSTypes[value];
 
   if (!tsType) {
     if (value instanceof Function) {
-      value = getConstructorName(value);
+      value = getConstructorName(value as Constructor);
     }
 
-    const datatype = getStructure(value!, instances);
+    const datatype = getStructure(value! as string, instances);
 
     if (datatype) {
       return {
-        typescriptType: datatype.constructor.name,
+        tsType: datatype.constructor.name,
         requireImport: true,
+        postfix: "",
       };
     } else if (typeof value === "string") {
       return {
-        typescriptType: value,
+        tsType: value,
         requireImport: false,
+        postfix: "",
       };
     }
 
-    return { typescriptType: "void" };
+    return { tsType: "void", postfix: "" };
   }
 
-  return { typescriptType: tsType };
+  return { tsType: tsType, postfix: "" };
 }

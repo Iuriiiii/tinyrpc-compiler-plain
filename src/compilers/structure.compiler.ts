@@ -1,12 +1,12 @@
 import type { CompilerOptions, StructureMetadata } from "@tinyrpc/server";
 import type { Import } from "../interfaces/mod.ts";
 import { isUndefined } from "jsr:@online/is@0.0";
-import { buildMember } from "./build-member.compile.ts";
-import { paramCompiler } from "./param.compiler.ts";
+import { memberCompiler } from "./member.compiler.ts";
+import { constructorParamCompiler } from "./constructor-param.compiler.ts";
 import { importCompiler } from "./import.compiler.ts";
 import { sassert } from "../utils/mod.ts";
 
-export function buildStructure(
+export function structureCompiler(
   structure: StructureMetadata,
   options: CompilerOptions,
 ) {
@@ -16,7 +16,7 @@ export function buildStructure(
     .filter((m) => isUndefined(m.constructorParam));
 
   const compiledMembers = members
-    .map((m) => buildMember(m, imports, options))
+    .map((m) => memberCompiler(m, imports, options))
     .join("\n");
 
   const constructorParams = allMembers
@@ -24,7 +24,7 @@ export function buildStructure(
     .sort((m1, m2) => m1.constructorParam! - m2.constructorParam!);
 
   const compiledConstructorParams = constructorParams
-    .map((m) => paramCompiler(m, imports, options))
+    .map((m) => constructorParamCompiler(m, imports, options))
     .join(", ");
 
   const compiledImports = importCompiler(imports)

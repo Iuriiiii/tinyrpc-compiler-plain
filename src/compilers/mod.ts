@@ -1,7 +1,7 @@
 import { formatFolder, randomString, toFilename, writeFile } from "../utils/mod.ts";
-import { buildModule } from "./build-module.compile.ts";
+import { moduleCompiler } from "./module.compiler.ts";
 import sdkDenoJson from "../assets/deno.json" with { type: "json" };
-import { buildStructure } from "./build-structure.compile.ts";
+import { structureCompiler } from "./structure.compiler.ts";
 import type { CompilerOptions } from "@tinyrpc/server";
 
 function createPackageFolder(path: string) {
@@ -23,11 +23,11 @@ export function compilePackage(options: CompilerOptions) {
   } = options.sdkOptions ?? {};
   const apiPath = `${path}/api`;
   const structurePath = `${path}/structures`;
+  let structuresMod = "";
 
   createPackageFolder(path);
   createPackageFolder(structurePath);
-
-  let structuresMod = "";
+  createPackageFolder(apiPath);
 
   for (const structure of structures) {
     const { name: structureName, constructor: structureConstructor } = structure;
@@ -39,7 +39,7 @@ export function compilePackage(options: CompilerOptions) {
 
     writeFile(
       `${structurePath}/${toFilename(structureName, "structure")}`,
-      buildStructure(structure, options),
+      structureCompiler(structure, options),
     );
 
     structuresMod += `export * from "./${toFilename(structure.name, "structure")}";`;
@@ -50,14 +50,12 @@ export function compilePackage(options: CompilerOptions) {
     structuresMod,
   );
 
-  createPackageFolder(apiPath);
-
   for (const module of modules) {
     const moduleName = module.moduleName ?? module.name;
 
     writeFile(
       `${apiPath}/${toFilename(moduleName, "api")}`,
-      buildModule(module, options),
+      moduleCompiler(module, options),
     );
   }
 
@@ -77,6 +75,7 @@ export function compilePackage(options: CompilerOptions) {
       modStructures,
       'import { configSdk } from "@tinyrpc/sdk-core";',
       'import { dateSerializer, dateDeserializer } from "@online/tinyserializers";',
+      "",
       `configSdk({
         host: "${host}",
         https: false,
