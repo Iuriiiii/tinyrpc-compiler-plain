@@ -72,7 +72,7 @@ export function getTypescriptType(
   if (wasArrayOrFunction) {
     const result = getTypescriptType(value, instances);
 
-    return { ...result, tsType: `${result.tsType}${postfix}` };
+    return { ...result, calculatedTsType: result.tsType + postfix };
   }
 
   // @ts-ignore: Just translate type constructor to ts type
@@ -90,17 +90,19 @@ export function getTypescriptType(
         tsType: datatype.constructor.name,
         requireImport: true,
         postfix: "",
+        calculatedTsType: datatype.constructor.name,
       };
     } else if (typeof value === "string") {
       return {
         tsType: value,
         requireImport: false,
         postfix: "",
+        calculatedTsType: value,
       };
     }
 
-    return { tsType: "void", postfix: "" };
+    return { tsType: "void", postfix: "", calculatedTsType: "void" };
   }
 
-  return { tsType: tsType, postfix: "" };
+  return { tsType: tsType, postfix: "", calculatedTsType: tsType };
 }

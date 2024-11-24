@@ -18,11 +18,11 @@ export function constructorParamCompiler(
     options.metadata,
   );
 
-  const { tsType: buildType } = typeResult;
+  const { calculatedTsType } = typeResult;
   const makePrivate = isPrivate ? "private " : "public ";
   const makeNullable = sassert(nullable && " | null");
 
   pushTypeIfNeeded(typeResult, buildImports, options);
 
-  return `${makePrivate}readonly ${memberName}: ${buildType}${makeNullable}`;
+  return `${makePrivate}readonly ${memberName}: ${calculatedTsType}${makeNullable}`;
 }

@@ -21,7 +21,7 @@ export function memberCompiler(
     options.metadata,
   );
 
-  const { tsType: buildType } = typeResult;
+  const { calculatedTsType } = typeResult;
   const makeOptional = sassert(optional && "?");
   const makeDefaultValue = sassert(defaultValue !== undefined && ` = ${defaultValue}`);
   const makePrivate = sassert(isPrivate && "private ", "public ");
@@ -31,5 +31,5 @@ export function memberCompiler(
 
   pushTypeIfNeeded(typeResult, buildImports, options);
 
-  return `${makePrivate}${makeReadonly}${memberName}${makeOptional}${makeLateInit}: ${buildType}${makeDefaultValue}${makeNullable}`;
+  return `${makePrivate}${makeReadonly}${memberName}${makeOptional}${makeLateInit}: ${calculatedTsType}${makeDefaultValue}${makeNullable}`;
 }

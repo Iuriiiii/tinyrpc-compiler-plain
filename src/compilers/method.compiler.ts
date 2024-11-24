@@ -22,7 +22,7 @@ export function methodCompiler(
     options.metadata,
   );
 
-  const { tsType: returnType } = typeResult;
+  const { calculatedTsType: returnType } = typeResult;
   const generics = sassert(method.generics && `<${method.generics.join(", ")}>`);
   const makeVoid = sassert(returnType === "void" && "void ");
   const paramNames = method.params.map((p) => p.name!).reverse().join(", ");
