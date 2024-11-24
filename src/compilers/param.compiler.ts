@@ -10,5 +10,5 @@ export function paramCompiler(_method: MethodMetadata, parameter: ParameterMetad
 
   pushTypeIfNeeded(typeResult, imports, options);
 
-  return `${name}${makeOptional}${type}`;
+  return `${name}${makeOptional}:${type}`;
 }
