@@ -4,11 +4,11 @@ import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 
 export function paramCompiler(_method: MethodMetadata, parameter: ParameterMetadata, imports: Import[], options: CompilerOptions) {
   const typeResult = getTypescriptType(parameter.dataType, options.metadata);
-  const { tsType: type } = typeResult;
+  const { calculatedTsType } = typeResult;
   const makeOptional = sassert(parameter.optional && "?");
   const name = sassert(parameter.name, `p${parameter.index}`);
 
   pushTypeIfNeeded(typeResult, imports, options);
 
-  return `${name}${makeOptional}:${type}`;
+  return `${name}${makeOptional}:${calculatedTsType}`;
 }
