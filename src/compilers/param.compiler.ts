@@ -1,28 +1,14 @@
+import type { CompilerOptions, MethodMetadata, ParameterMetadata } from "@tinyrpc/server";
 import type { Import } from "../interfaces/mod.ts";
-import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server";
-import { getTypescriptType, pushTypeIfNeeded } from "../utils/mod.ts";
+import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 
-export function paramCompiler(
-  member: MemberMetadata,
-  buildImports: Import[],
-  options: CompilerOptions,
-) {
-  const {
-    dataType,
-    name: memberName,
-    private: isPrivate,
-    nullable,
-  } = member;
-  const typeResult = getTypescriptType(
-    dataType,
-    options.metadata,
-  );
+export function paramCompiler(_method: MethodMetadata, parameter: ParameterMetadata, imports: Import[], options: CompilerOptions) {
+  const typeResult = getTypescriptType(parameter.dataType, options.metadata);
+  const { tsType: type } = typeResult;
+  const makeOptional = sassert(parameter.optional && "?");
+  const name = sassert(parameter.name, `p${parameter.index}`);
 
-  const { typescriptType: buildType } = typeResult;
-  const makePrivate = isPrivate ? "private " : "public ";
-  const makeNullable = nullable ? " | null" : "";
+  pushTypeIfNeeded(typeResult, imports, options);
 
-  pushTypeIfNeeded(typeResult, buildImports, options);
-
-  return `${makePrivate}readonly ${memberName}: ${buildType}${makeNullable}`;
+  return `${name}${makeOptional}${type}`;
 }

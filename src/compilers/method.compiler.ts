@@ -1,35 +1,36 @@
 import type { CompilerOptions, MethodMetadata, ModuleMetadata, ParameterMetadata } from "@tinyrpc/server";
 import type { Import } from "../interfaces/mod.ts";
-import { buildParam, getParamName } from "./build-param.compile.ts";
-import { camelToPascal, getTypescriptType, pushTypeIfNeeded } from "../utils/mod.ts";
+import { camelToPascal, getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
+import type { Constructor } from "../types/mod.ts";
+import { paramCompiler } from "./param.compiler.ts";
 
 function sortMethodParams(a: ParameterMetadata, b: ParameterMetadata) {
   return a.index - b.index;
 }
 
-export function buildMethod(
+export function methodCompiler(
   module: ModuleMetadata,
   method: MethodMetadata,
-  buildImports: Import[],
+  imports: Import[],
   interfaces: string[],
   options: CompilerOptions,
 ) {
   const moduleName = module.moduleName ?? module.name;
   const { name: methodName, links = [] } = method;
   const typeResult = getTypescriptType(
-    method.returnType,
+    method.returnType as string | Constructor,
     options.metadata,
   );
 
-  const { typescriptType: returnType } = typeResult;
-  const generics = method.generics ? `<${method.generics.join(", ")}>` : "";
-  const makeVoid = returnType === "void" ? "void " : "";
-  const paramNames = method.params.map(getParamName).reverse().join(", ");
+  const { tsType: returnType } = typeResult;
+  const generics = sassert(method.generics && `<${method.generics.join(", ")}>`);
+  const makeVoid = sassert(returnType === "void" && "void ");
+  const paramNames = method.params.map((p) => p.name!).reverse().join(", ");
   const areParams = method.params.length > 0;
-  const buildOptionalFirstArgument = !areParams ? " = {}" : "";
+  const buildOptionalFirstArgument = sassert(!areParams && " = {}");
   const buildedParams = method.params
     .sort(sortMethodParams)
-    .map((p) => buildParam(p, buildImports, options))
+    .map((p) => paramCompiler(method, p, imports, options))
     .join("; ");
   const interfaceName = `${camelToPascal(methodName)}Params`;
   const _return = makeVoid ? `return { ...response, result: void 0 };` : `return response;`;
@@ -52,7 +53,7 @@ export function buildMethod(
     ${_return}
 }`;
 
-  pushTypeIfNeeded(typeResult, buildImports, options);
+  pushTypeIfNeeded(typeResult, imports, options);
 
   interfaces.push(`interface ${interfaceName}{${buildedParams}}`);
   return output;
