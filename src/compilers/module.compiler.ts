@@ -64,7 +64,7 @@ ${compiledImports}
 
 ${buildedInterfaces}
 
-${isSerializable ? "@Serializable()" : ""}
+${sassert(isSerializable && "@Serializable()")}
 export class ${moduleName} ${_extends}{
     ${compiledMembers}
     ${constructor}

@@ -1,4 +1,4 @@
-import type { CompilerOptions, MethodMetadata, ModuleMetadata, ParameterMetadata } from "@tinyrpc/server";
+import { type CompilerOptions, type MethodMetadata, type ModuleMetadata, type ParameterMetadata, SerializableClass } from "@tinyrpc/server";
 import type { Import } from "../interfaces/mod.ts";
 import { camelToPascal, getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 import type { Constructor } from "../types/mod.ts";
@@ -23,6 +23,7 @@ export function methodCompiler(
   );
 
   const { calculatedTsType: returnType } = typeResult;
+  const isSerializable = module.constructor.prototype instanceof SerializableClass;
   const generics = sassert(method.generics && `<${method.generics.join(", ")}>`);
   const makeVoid = sassert(returnType === "void" && "void ");
   const paramNames = method.params.map((p) => p.name!).reverse().join(", ");
@@ -45,7 +46,8 @@ export function methodCompiler(
         parent: this,
         keys: ${JSON.stringify(links)} as unknown as MapStructure<object>,
       },
-      request
+      request,
+      context: ${!isSerializable ? "[]" : "this.serialize().arguments"}
     };
 
     const response = await rpc<${returnType}, HttpError>(argument);
