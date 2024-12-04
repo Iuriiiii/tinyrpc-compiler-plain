@@ -3,7 +3,7 @@ import type { Constructor } from "../types/mod.ts";
 import type { GetTypescriptTypeResult } from "../interfaces/mod.ts";
 import { getStructure } from "./get-structure.util.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
-import { isArray, isUndefined } from "@online/is";
+import { isArray, isPlainObject, isUndefined } from "@online/is";
 import { getEnum } from "./get-enum.util.ts";
 
 const TypesToTSTypes = {
@@ -77,27 +77,27 @@ export function getTypescriptType(
   }
 
   // @ts-ignore: Just translate type constructor to ts type
-  const tsType: string | undefined = TypesToTSTypes[value];
+  const tsType: string | object | undefined = TypesToTSTypes[value];
 
-  if (!tsType) {
+  if (isPlainObject(tsType)) {
+    const enumerator = getEnum(value, instances);
+
+    if (enumerator) {
+      return {
+        tsType: enumerator.name,
+        requireImport: true,
+        postfix: "",
+        calculatedTsType: enumerator.name,
+      };
+    }
+  }
+
+  if (isUndefined(tsType)) {
     if (value instanceof Function) {
       value = getConstructorName(value as Constructor);
     }
 
     const datatype = getStructure(value! as string, instances);
-
-    if (isUndefined(datatype)) {
-      const enumerator = getEnum(value! as string, instances);
-
-      if (enumerator) {
-        return {
-          tsType: enumerator.name,
-          requireImport: true,
-          postfix: "",
-          calculatedTsType: enumerator.name,
-        };
-      }
-    }
 
     if (datatype) {
       return {
@@ -106,7 +106,9 @@ export function getTypescriptType(
         postfix: "",
         calculatedTsType: datatype.constructor.name,
       };
-    } else if (typeof value === "string") {
+    }
+
+    if (typeof value === "string") {
       return {
         tsType: value,
         requireImport: false,
@@ -118,5 +120,5 @@ export function getTypescriptType(
     return { tsType: "void", postfix: "", calculatedTsType: "void" };
   }
 
-  return { tsType: tsType, postfix: "", calculatedTsType: tsType };
+  return { tsType: tsType as string, postfix: "", calculatedTsType: tsType as string };
 }
