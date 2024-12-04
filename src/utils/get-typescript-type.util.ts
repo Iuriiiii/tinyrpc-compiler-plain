@@ -3,7 +3,7 @@ import type { Constructor } from "../types/mod.ts";
 import type { GetTypescriptTypeResult } from "../interfaces/mod.ts";
 import { getStructure } from "./get-structure.util.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
-import { isArray, isPlainObject, isUndefined } from "@online/is";
+import { isArray, isString, isUndefined } from "@online/is";
 import { getEnum } from "./get-enum.util.ts";
 
 const TypesToTSTypes = {
@@ -79,17 +79,15 @@ export function getTypescriptType(
   // @ts-ignore: Just translate type constructor to ts type
   const tsType: string | object | undefined = TypesToTSTypes[value];
 
-  if (isPlainObject(tsType)) {
-    const enumerator = getEnum(value, instances);
+  const enumerator = getEnum(value, instances);
 
-    if (enumerator) {
-      return {
-        tsType: enumerator.name,
-        requireImport: true,
-        postfix: "",
-        calculatedTsType: enumerator.name,
-      };
-    }
+  if (enumerator) {
+    return {
+      tsType: enumerator.name,
+      requireImport: true,
+      postfix: "",
+      calculatedTsType: enumerator.name,
+    };
   }
 
   if (isUndefined(tsType)) {
@@ -108,7 +106,7 @@ export function getTypescriptType(
       };
     }
 
-    if (typeof value === "string") {
+    if (isString(value)) {
       return {
         tsType: value,
         requireImport: false,
