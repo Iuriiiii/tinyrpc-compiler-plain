@@ -1,7 +1,8 @@
-import { type CompilerOptions, type MethodMetadata, type ModuleMetadata, type ParameterMetadata, SerializableClass } from "@tinyrpc/server";
+import type { CompilerOptions, MethodMetadata, ModuleMetadata, ParameterMetadata } from "@tinyrpc/server/types";
 import type { Import } from "../interfaces/mod.ts";
-import { camelToPascal, getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 import type { Constructor } from "../types/mod.ts";
+import { SerializableClass } from "@tinyrpc/server";
+import { camelToPascal, getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 import { paramCompiler } from "./param.compiler.ts";
 
 function sortMethodParams(a: ParameterMetadata, b: ParameterMetadata) {

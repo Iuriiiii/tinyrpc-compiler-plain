@@ -1,5 +1,5 @@
 import type { Import } from "../interfaces/mod.ts";
-import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server";
+import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server/types";
 import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 
 export function constructorParamCompiler(
