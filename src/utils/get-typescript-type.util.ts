@@ -1,9 +1,9 @@
-import type { DataType, ServerMetadata } from "@tinyrpc/server";
+import type { DataType, ServerMetadata } from "@tinyrpc/server/types";
 import type { Constructor } from "../types/mod.ts";
 import type { GetTypescriptTypeResult } from "../interfaces/mod.ts";
 import { getStructure } from "./get-structure.util.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
-import { isArray } from "jsr:@online/is@0.0";
+import { isArray } from "@online/is";
 
 const TypesToTSTypes = {
   // @ts-ignore: Allow custom key

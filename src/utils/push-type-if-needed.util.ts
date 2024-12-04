@@ -1,4 +1,4 @@
-import type { CompilerOptions } from "@tinyrpc/server";
+import type { CompilerOptions } from "@tinyrpc/server/types";
 import type { GetTypescriptTypeResult, Import } from "../interfaces/mod.ts";
 import { importContains } from "./import-contains.util.ts";
 import { pushImport } from "./push-import.util.ts";

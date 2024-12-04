@@ -1,6 +1,6 @@
 import type { CompilerOptions, StructureMetadata } from "@tinyrpc/server";
 import type { Import } from "../interfaces/mod.ts";
-import { isUndefined } from "jsr:@online/is@0.0";
+import { isUndefined } from "@online/is";
 import { memberCompiler } from "./member.compiler.ts";
 import { constructorParamCompiler } from "./constructor-param.compiler.ts";
 import { importCompiler } from "./import.compiler.ts";
