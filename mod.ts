@@ -1,4 +1,4 @@
-import type { CompilerInformation, CompilerOptions } from "@tinyrpc/server";
+import type { CompilerInformation, CompilerOptions } from "@tinyrpc/server/types";
 import { compilePackage } from "./src/compilers/mod.ts";
 
 export const CompilerPlain: CompilerInformation = {

@@ -1,8 +1,9 @@
-import { type CompilerOptions, type MethodMetadata, type ModuleMetadata, SerializableClass } from "@tinyrpc/server";
+import { SerializableClass } from "@tinyrpc/server";
+import type { CompilerOptions, MethodMetadata, ModuleMetadata } from "@tinyrpc/server/types";
 import type { Import } from "../interfaces/mod.ts";
 import { memberCompiler } from "./member.compiler.ts";
 import { methodCompiler } from "./method.compiler.ts";
-import { isUndefined } from "jsr:@online/is@0.0";
+import { isUndefined } from "@online/is";
 import { constructorParamCompiler } from "./constructor-param.compiler.ts";
 import { importCompiler } from "./import.compiler.ts";
 import { sassert } from "../utils/mod.ts";

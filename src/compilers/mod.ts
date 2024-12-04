@@ -2,7 +2,8 @@ import { formatFolder, randomString, toFilename, writeFile } from "../utils/mod.
 import { moduleCompiler } from "./module.compiler.ts";
 import sdkDenoJson from "../assets/deno.json" with { type: "json" };
 import { structureCompiler } from "./structure.compiler.ts";
-import type { CompilerOptions } from "@tinyrpc/server";
+import type { CompilerOptions } from "@tinyrpc/server/types";
+import { enumCompiler } from "./enum.compiler.ts";
 
 function createPackageFolder(path: string) {
   try {
@@ -14,20 +15,23 @@ function createPackageFolder(path: string) {
 }
 
 export function compilePackage(options: CompilerOptions) {
-  const { structures, modules } = options.metadata;
+  const { structures, modules, enums } = options.metadata;
   const { server } = options;
   const {
     path = `${Deno.cwd()}/plain-sdk`,
     name: packageName = `tinyrpc-sdk-${randomString()}`,
     version: packageVersion = "0.1.0",
   } = options.sdkOptions ?? {};
-  const apiPath = `${path}/api`;
-  const structurePath = `${path}/structures`;
+  const apisPath = `${path}/api`;
+  const structuresPath = `${path}/structures`;
+  const enumsPath = `${path}/enums`;
   let structuresMod = "";
+  let enumsMod = "";
 
   createPackageFolder(path);
-  createPackageFolder(structurePath);
-  createPackageFolder(apiPath);
+  createPackageFolder(structuresPath);
+  createPackageFolder(apisPath);
+  createPackageFolder(enumsPath);
 
   for (const structure of structures) {
     const { name: structureName, constructor: structureConstructor } = structure;
@@ -37,30 +41,49 @@ export function compilePackage(options: CompilerOptions) {
       continue;
     }
 
+    const structureFileName = toFilename(structureName, "structure");
+
     writeFile(
-      `${structurePath}/${toFilename(structureName, "structure")}`,
+      `${structuresPath}/${structureFileName}`,
       structureCompiler(structure, options),
     );
 
-    structuresMod += `export * from "./${toFilename(structure.name, "structure")}";`;
+    structuresMod += `export * from "./${structureFileName}";`;
   }
 
   writeFile(
-    `${structurePath}/mod.ts`,
+    `${structuresPath}/mod.ts`,
     structuresMod,
+  );
+
+  for (const _enum of enums) {
+    const { name: enumName } = _enum;
+    const enumFileName = toFilename(enumName, "enum");
+
+    writeFile(
+      `${enumsPath}/${enumFileName}`,
+      enumCompiler(_enum, options),
+    );
+
+    enumsMod += `export * from "./${enumFileName}";`;
+  }
+
+  writeFile(
+    `${enumsPath}/mod.ts`,
+    enumsMod,
   );
 
   for (const module of modules) {
     const moduleName = module.moduleName ?? module.name;
 
     writeFile(
-      `${apiPath}/${toFilename(moduleName, "api")}`,
+      `${apisPath}/${toFilename(moduleName, "api")}`,
       moduleCompiler(module, options),
     );
   }
 
   writeFile(
-    `${apiPath}/mod.ts`,
+    `${apisPath}/mod.ts`,
     modules.map((module) => `export * from "./${toFilename(module.name, "api")}";`).join("\n"),
   );
 
