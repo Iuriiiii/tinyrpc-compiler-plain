@@ -1,4 +1,4 @@
-import type { CompilerOptions, MethodMetadata, ParameterMetadata } from "@tinyrpc/server";
+import type { CompilerOptions, MethodMetadata, ParameterMetadata } from "@tinyrpc/server/types";
 import type { Import } from "../interfaces/mod.ts";
 import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 
