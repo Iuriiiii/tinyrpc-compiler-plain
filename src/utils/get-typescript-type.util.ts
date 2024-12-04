@@ -3,7 +3,8 @@ import type { Constructor } from "../types/mod.ts";
 import type { GetTypescriptTypeResult } from "../interfaces/mod.ts";
 import { getStructure } from "./get-structure.util.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
-import { isArray } from "@online/is";
+import { isArray, isUndefined } from "@online/is";
+import { getEnum } from "./get-enum.util.ts";
 
 const TypesToTSTypes = {
   // @ts-ignore: Allow custom key
@@ -84,6 +85,19 @@ export function getTypescriptType(
     }
 
     const datatype = getStructure(value! as string, instances);
+
+    if (isUndefined(datatype)) {
+      const enumerator = getEnum(value! as string, instances);
+
+      if (enumerator) {
+        return {
+          tsType: enumerator.name,
+          requireImport: true,
+          postfix: "",
+          calculatedTsType: enumerator.name,
+        };
+      }
+    }
 
     if (datatype) {
       return {
