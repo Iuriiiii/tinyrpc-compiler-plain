@@ -8,12 +8,13 @@
     "jsr:@online/tinyserializer@0.0": "0.0.16",
     "jsr:@online/tinyserializers@0.0": "0.0.7",
     "jsr:@std/assert@1": "1.0.8",
-    "jsr:@std/assert@^1.0.6": "1.0.8",
+    "jsr:@std/assert@^1.0.6": "1.0.9",
     "jsr:@std/cli@^1.0.6": "1.0.7",
+    "jsr:@std/cli@^1.0.8": "1.0.8",
     "jsr:@std/encoding@^1.0.5": "1.0.5",
     "jsr:@std/fmt@^1.0.3": "1.0.3",
     "jsr:@std/html@^1.0.3": "1.0.3",
-    "jsr:@std/http@^1.0.8": "1.0.11",
+    "jsr:@std/http@^1.0.8": "1.0.12",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/media-types@^1.1.0": "1.1.0",
     "jsr:@std/net@^1.0.4": "1.0.4",
@@ -21,7 +22,8 @@
     "jsr:@std/streams@^1.0.8": "1.0.8",
     "jsr:@tinyrpc/sdk-core@0.1": "0.1.17",
     "jsr:@tinyrpc/server@~0.2.3": "0.2.3",
-    "jsr:@tinyrpc/server@~0.2.5": "0.2.5"
+    "jsr:@tinyrpc/server@~0.2.5": "0.2.5",
+    "jsr:@tinyrpc/server@~0.2.7": "0.2.7"
   },
   "jsr": {
     "@dx/reflect@0.2.14": {
@@ -56,8 +58,17 @@
         "jsr:@std/internal"
       ]
     },
+    "@std/assert@1.0.9": {
+      "integrity": "a9f0c611a869cc791b26f523eec54c7e187aab7932c2c8e8bea0622d13680dcd",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
     "@std/cli@1.0.7": {
       "integrity": "98359df9df586a69015ba570305183b0cb9e7d53c05ea2016ef9a3e77e82c7cd"
+    },
+    "@std/cli@1.0.8": {
+      "integrity": "3762d8dc9a373715c08d871c38d45e637b25266f013a1d0bbe560bca409de94e"
     },
     "@std/encoding@1.0.5": {
       "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
@@ -71,7 +82,20 @@
     "@std/http@1.0.11": {
       "integrity": "f1928e69e7dcf1664e22d153934cb866bf31e1bbe4bc59f8ac1b4d0e98cb7558",
       "dependencies": [
-        "jsr:@std/cli",
+        "jsr:@std/cli@^1.0.6",
+        "jsr:@std/encoding",
+        "jsr:@std/fmt",
+        "jsr:@std/html",
+        "jsr:@std/media-types",
+        "jsr:@std/net",
+        "jsr:@std/path",
+        "jsr:@std/streams"
+      ]
+    },
+    "@std/http@1.0.12": {
+      "integrity": "85246d8bfe9c8e2538518725b158bdc31f616e0869255f4a8d9e3de919cab2aa",
+      "dependencies": [
+        "jsr:@std/cli@^1.0.8",
         "jsr:@std/encoding",
         "jsr:@std/fmt",
         "jsr:@std/html",
@@ -116,6 +140,18 @@
     },
     "@tinyrpc/server@0.2.5": {
       "integrity": "07df1fc4f8bd5f9af64f83e3bcd9cac22a7f5946f391158bec6419b3412d58b5",
+      "dependencies": [
+        "jsr:@dx/reflect",
+        "jsr:@online/is@0.0",
+        "jsr:@online/packager",
+        "jsr:@online/tinyserializers",
+        "jsr:@std/assert@^1.0.6",
+        "jsr:@std/http",
+        "jsr:@tinyrpc/sdk-core"
+      ]
+    },
+    "@tinyrpc/server@0.2.7": {
+      "integrity": "1dbf906dd29c6d8302ec824abe7050a352708499180949448e8137783cfb6f6a",
       "dependencies": [
         "jsr:@dx/reflect",
         "jsr:@online/is@0.0",
