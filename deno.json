@@ -1,11 +1,11 @@
 {
   "name": "@tinyrpc/compiler-plain",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "exports": "./mod.ts",
   "imports": {
     "@online/is": "jsr:@online/is@^0.0.2",
     "@std/assert": "jsr:@std/assert@1",
-    "@tinyrpc/server": "jsr:@tinyrpc/server@^0.2.7"
+    "@tinyrpc/server": "jsr:@tinyrpc/server@^0.2.8"
   },
   "fmt": {
     "lineWidth": 200
