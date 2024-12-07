@@ -1,6 +1,6 @@
 {
   "name": "@tinyrpc/compiler-plain",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "exports": "./mod.ts",
   "imports": {
     "@online/is": "jsr:@online/is@^0.0.2",
