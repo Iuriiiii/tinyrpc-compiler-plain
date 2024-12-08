@@ -18,3 +18,4 @@ export * from "./get-module.util.ts";
 export * from "./push-type-if-needed.util.ts";
 export * from "./sassert.util.ts";
 export * from "./get-enum.util.ts";
+export * from "./get-enum-keys.util.ts";

@@ -1,5 +1,6 @@
 import type { CompilerOptions, EnumMetadata } from "@tinyrpc/server/types";
 import { isNumber } from "@online/is";
+import { getEnumKeys } from "../utils/mod.ts";
 
 function quoteKeyIfNeeded(value: string) {
   return value.match(/\s+/) ? `"${value}"` : value;
@@ -18,8 +19,9 @@ export function enumCompiler(
   _options: CompilerOptions,
 ) {
   const { name: enumName, value: enumerator } = member;
-  const entries = Object.entries(enumerator as object);
-  const values = entries.map(([key, value]) => key.trim() ? `${quoteKeyIfNeeded(key)} = ${quoteValueIfNeeded(value)}` : "").join(
+  const keys = getEnumKeys(enumerator as object);
+  // @ts-ignore: Index access
+  const values = keys.map((key) => key.trim() ? `${quoteKeyIfNeeded(key)} = ${quoteValueIfNeeded(enumerator[value])}` : "").join(
     ",\n",
   );
 
