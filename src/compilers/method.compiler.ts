@@ -36,7 +36,7 @@ export function methodCompiler(
     .join("; ");
   const interfaceName = `${camelToPascal(methodName)}Params`;
   const output =
-    `async ${methodName}${generics}({${paramNames}}: ${interfaceName}${buildOptionalFirstArgument}, request: RequestBody = {}): Unwrappable<MethodResponse<${returnType}>, ${returnType}> {
+    `${methodName}${generics}({${paramNames}}: ${interfaceName}${buildOptionalFirstArgument}, request: RequestBody = {}): Unwrappable<MethodResponse<${returnType}>, ${returnType}> {
     const argument = {
       connection: {
         module: "${moduleName}",
