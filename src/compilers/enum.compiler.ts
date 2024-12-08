@@ -19,7 +19,9 @@ export function enumCompiler(
 ) {
   const { name: enumName, value: enumerator } = member;
   const entries = Object.entries(enumerator as object);
-  const values = entries.map(([key, value]) => `${quoteKeyIfNeeded(key)} = ${quoteValueIfNeeded(value)}`).join(",\n");
+  const values = entries.map(([key, value]) => key.trim() ? `${quoteKeyIfNeeded(key)} = ${quoteValueIfNeeded(value)}` : "").join(
+    ",\n",
+  );
 
   const code = `
 
