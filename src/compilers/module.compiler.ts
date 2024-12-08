@@ -61,7 +61,7 @@ import {
   RequestBody,
   rawRpc as rpc,
   MapStructure,
-  Unwrappable,
+  type Unwrappable,
   makeItUnwrappable,
   ${serializableImports}
 } from "@tinyrpc/sdk-core";
