@@ -2,7 +2,12 @@ import type { CompilerOptions, MethodMetadata, ParameterMetadata } from "@tinyrp
 import type { Import } from "../interfaces/mod.ts";
 import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 
-export function paramCompiler(_method: MethodMetadata, parameter: ParameterMetadata, imports: Import[], options: CompilerOptions) {
+export function paramCompiler(
+  _method: MethodMetadata,
+  parameter: ParameterMetadata,
+  imports: Import[],
+  options: CompilerOptions,
+) {
   const typeResult = getTypescriptType(parameter.dataType, options.metadata);
   const { calculatedTsType } = typeResult;
   const makeOptional = sassert(parameter.optional && "?");

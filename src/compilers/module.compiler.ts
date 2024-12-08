@@ -31,7 +31,9 @@ export function moduleCompiler(module: ModuleMetadata, options: CompilerOptions)
     .join(", ");
 
   const constructorParamNames = constructorParams.map((m) => `this.${m.name}`).join(", ");
-  const constructor = sassert(constructorParams.length > 0 && `constructor(${compiledConstructorParams}){${sassert(isSerializable && "super();")}}`);
+  const constructor = sassert(
+    constructorParams.length > 0 && `constructor(${compiledConstructorParams}){${sassert(isSerializable && "super();")}}`,
+  );
   const memberNames = members.map((m) => m.name);
   const membersObject = memberNames.map((memberName) => `${memberName}: this.${memberName}`).join(",\n");
   const buildedMethods = methods.map(methodsMapper()).join("\n\n");

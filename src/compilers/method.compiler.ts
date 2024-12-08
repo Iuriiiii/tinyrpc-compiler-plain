@@ -35,8 +35,8 @@ export function methodCompiler(
     .map((p) => paramCompiler(method, p, imports, options))
     .join("; ");
   const interfaceName = `${camelToPascal(methodName)}Params`;
-  const _return = makeVoid ? `return { ...response, result: void 0 };` : `return response;`;
-  const output = `async ${methodName}${generics}({${paramNames}}: ${interfaceName}${buildOptionalFirstArgument}, request: RequestBody = {}): Promise<MethodResponse<${returnType}>> {
+  const output =
+    `async ${methodName}${generics}({${paramNames}}: ${interfaceName}${buildOptionalFirstArgument}, request: RequestBody = {}): Unwrappable<MethodResponse<${returnType}>, ${returnType}> {
     const argument = {
       connection: {
         module: "${moduleName}",
@@ -48,16 +48,15 @@ export function methodCompiler(
         keys: ${JSON.stringify(links)} as unknown as MapStructure<object>,
       },
       request,
-      context: ${!isSerializable ? "[]" : "this.serialize().arguments"}
+      context: ${!isSerializable ? "[]" : "this.serialize().arguments"},
+      makeVoid: ${!!makeVoid}
     };
 
-    const response = await rpc<${returnType}, HttpError>(argument);
-
-    ${_return}
+    return makeItUnwrappable(rpc<${returnType}, HttpError>(argument));
 }`;
 
   pushTypeIfNeeded(typeResult, imports, options);
-
   interfaces.push(`interface ${interfaceName}{${buildedParams}}`);
+
   return output;
 }
