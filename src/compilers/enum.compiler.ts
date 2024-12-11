@@ -21,7 +21,7 @@ export function enumCompiler(
   const { name: enumName, value: enumerator } = member;
   const keys = getEnumKeys(enumerator as object);
   // @ts-ignore: Index access
-  const values = keys.map((key) => key.trim() ? `${quoteKeyIfNeeded(key)} = ${quoteValueIfNeeded(enumerator[value])}` : "").join(
+  const values = keys.map((key) => key.trim() ? `${quoteKeyIfNeeded(key)} = ${quoteValueIfNeeded(enumerator[key])}` : "").join(
     ",\n",
   );
 
