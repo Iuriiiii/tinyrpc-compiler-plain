@@ -38,15 +38,20 @@ export function toTs(
   while (isArray(dataType)) {
     response.arrayLevel++;
 
-    if (dataType.length > 1) {
-      // TODO: Handle tuples?
+    // @ts-ignore: Handle empty arrays
+    if (dataType.length === 0) {
+      response.type = TsType.Native;
+      response.compiled = response.dataType = "never[]";
+      
+      return response;
     }
-  }
 
-  if (dataType instanceof Function) {
-    const _dataType = (<() => DataType> dataType)();
+    // if (dataType.length > 1) {
+    //   // TODO: Handle tuples?
+    //   break;
+    // }
 
-    return toTs(_dataType, response);
+    dataType = dataType[0] as DataType;
   }
 
   if (PRIMITIVES.has(dataType)) {
@@ -74,6 +79,10 @@ export function toTs(
       response.type = TsType.Native;
       response.compiled = response.dataType = "never";
     } while (false);
+  } else if (dataType instanceof Function) {
+    const _dataType = (<() => DataType> dataType)();
+
+    return toTs(_dataType, response);
   } else if (isString(dataType)) {
     // Improve this to analyse complex types and import required files if needed
     do {
