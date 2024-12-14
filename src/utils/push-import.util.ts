@@ -1,15 +1,14 @@
 import type { CompilerOptions } from "@tinyrpc/server/types";
-import type { Import } from "../interfaces/mod.ts";
-import { getModule } from "./get-module.util.ts";
+import type { Import, ToTsResponse } from "../interfaces/mod.ts";
 import { toFilename } from "./to-filename.util.ts";
-import { getEnum } from "./get-enum.util.ts";
+import { TsType } from "../enums/mod.ts";
 
-export function pushImport(type: string, imports: Import[], options: CompilerOptions) {
-  const isModule = !!getModule(type, options.metadata);
-  const isEnum = !!getEnum(type, options.metadata);
-  const fileName = toFilename(type, isModule ? "api" : isEnum ? "enum" : "structure");
+export function pushImport({ type, dataType }: ToTsResponse, imports: Import[], _options: CompilerOptions) {
+  const isModule = type === TsType.Module;
+  const isEnum = type === TsType.Enum;
+  const fileName = toFilename(dataType, isModule ? "api" : isEnum ? "enum" : "structure");
   const item: Import = {
-    type,
+    type: dataType,
     fileName,
     folder: isModule ? "." : isEnum ? "../enums" : "../structures",
     isModule,

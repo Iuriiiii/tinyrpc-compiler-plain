@@ -1,6 +1,7 @@
 import type { Import } from "../interfaces/mod.ts";
 import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server/types";
-import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
+import { pushTypeIfNeeded, sassert } from "../utils/mod.ts";
+import { toTs } from "../utils/to-ts.util.ts";
 
 export function memberCompiler(
   member: MemberMetadata,
@@ -16,12 +17,8 @@ export function memberCompiler(
     nullable,
     readonly,
   } = member;
-  const typeResult = getTypescriptType(
-    dataType,
-    options.metadata,
-  );
-
-  const { calculatedTsType } = typeResult;
+  const compiledTs = toTs(dataType);
+  const { compiled } = compiledTs;
   const makeOptional = sassert(optional && "?");
   const makeDefaultValue = sassert(defaultValue !== undefined && ` = ${defaultValue}`);
   const makePrivate = sassert(isPrivate && "private ", "public ");
@@ -29,7 +26,7 @@ export function memberCompiler(
   const makeLateInit = sassert(defaultValue === undefined && !optional && "!");
   const makeReadonly = sassert(readonly && "readonly ");
 
-  pushTypeIfNeeded(typeResult, buildImports, options);
+  pushTypeIfNeeded(compiledTs, buildImports, options);
 
-  return `${makePrivate}${makeReadonly}${memberName}${makeOptional}${makeLateInit}: ${calculatedTsType}${makeDefaultValue}${makeNullable}`;
+  return `${makePrivate}${makeReadonly}${memberName}${makeOptional}${makeLateInit}: ${compiled}${makeDefaultValue}${makeNullable}`;
 }

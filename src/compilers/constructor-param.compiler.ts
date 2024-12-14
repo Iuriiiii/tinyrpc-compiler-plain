@@ -1,6 +1,7 @@
 import type { Import } from "../interfaces/mod.ts";
 import type { CompilerOptions, MemberMetadata } from "@tinyrpc/server/types";
-import { getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
+import { pushTypeIfNeeded, sassert } from "../utils/mod.ts";
+import { toTs } from "../utils/to-ts.util.ts";
 
 export function constructorParamCompiler(
   member: MemberMetadata,
@@ -13,16 +14,13 @@ export function constructorParamCompiler(
     private: isPrivate,
     nullable,
   } = member;
-  const typeResult = getTypescriptType(
-    dataType,
-    options.metadata,
-  );
+  const compiledTs = toTs(dataType);
 
-  const { calculatedTsType } = typeResult;
+  const { compiled } = compiledTs;
   const makePrivate = isPrivate ? "private " : "public ";
   const makeNullable = sassert(nullable && " | null");
 
-  pushTypeIfNeeded(typeResult, buildImports, options);
+  pushTypeIfNeeded(compiledTs, buildImports, options);
 
-  return `${makePrivate}readonly ${memberName}: ${calculatedTsType}${makeNullable}`;
+  return `${makePrivate}readonly ${memberName}: ${compiled}${makeNullable}`;
 }
