@@ -42,7 +42,7 @@ export function toTs(
     if (dataType.length === 0) {
       response.type = TsType.Native;
       response.compiled = response.dataType = "never[]";
-      
+
       return response;
     }
 
