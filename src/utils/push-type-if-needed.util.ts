@@ -1,14 +1,15 @@
 import type { CompilerOptions } from "@tinyrpc/server/types";
-import type { GetTypescriptTypeResult, Import } from "../interfaces/mod.ts";
+import type { Import, ToTsResponse } from "../interfaces/mod.ts";
 import { importContains } from "./import-contains.util.ts";
 import { pushImport } from "./push-import.util.ts";
+import { TsType } from "../enums/mod.ts";
 
 export function pushTypeIfNeeded(
-  { tsType: type, requireImport }: GetTypescriptTypeResult,
+  compiledTs: ToTsResponse,
   imports: Import[],
   options: CompilerOptions,
 ) {
-  if (requireImport && !importContains(imports, type)) {
-    pushImport(type, imports, options);
+  if (compiledTs.type !== TsType.Native && !importContains(imports, compiledTs.dataType)) {
+    pushImport(compiledTs, imports, options);
   }
 }

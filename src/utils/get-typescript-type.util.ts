@@ -5,6 +5,7 @@ import { getStructure } from "./get-structure.util.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
 import { isArray, isString, isUndefined } from "@online/is";
 import { getEnum } from "./get-enum.util.ts";
+import { TsType } from "../enums/mod.ts";
 
 const TypesToTSTypes = {
   // @ts-ignore: Allow custom key
@@ -87,6 +88,7 @@ export function getTypescriptType(
       requireImport: true,
       postfix: "",
       calculatedTsType: enumerator.name,
+      type: TsType.Enum,
     };
   }
 
@@ -103,6 +105,7 @@ export function getTypescriptType(
         requireImport: true,
         postfix: "",
         calculatedTsType: datatype.constructor.name,
+        type: TsType.Structure,
       };
     }
 
@@ -112,11 +115,12 @@ export function getTypescriptType(
         requireImport: false,
         postfix: "",
         calculatedTsType: value,
+        type: TsType.Native,
       };
     }
 
-    return { tsType: "void", postfix: "", calculatedTsType: "void" };
+    return { tsType: "void", postfix: "", calculatedTsType: "void", type: TsType.Native };
   }
 
-  return { tsType: tsType as string, postfix: "", calculatedTsType: tsType as string };
+  return { tsType: tsType as string, postfix: "", calculatedTsType: tsType as string, type: TsType.Native };
 }

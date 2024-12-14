@@ -2,8 +2,9 @@ import type { CompilerOptions, MethodMetadata, ModuleMetadata, ParameterMetadata
 import type { Import } from "../interfaces/mod.ts";
 import type { Constructor } from "../types/mod.ts";
 import { SerializableClass } from "@tinyrpc/server";
-import { camelToPascal, getTypescriptType, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
-import { paramCompiler } from "./param.compiler.ts";
+import { camelToPascal, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
+import { interfaceMemberCompiler } from "./interface-member.compiler.ts";
+import { toTs } from "../utils/to-ts.util.ts";
 
 function sortMethodParams(a: ParameterMetadata, b: ParameterMetadata) {
   return a.index - b.index;
@@ -18,12 +19,8 @@ export function methodCompiler(
 ) {
   const moduleName = module.moduleName ?? module.name;
   const { name: methodName, links = [] } = method;
-  const typeResult = getTypescriptType(
-    method.returnType as string | Constructor,
-    options.metadata,
-  );
-
-  const { calculatedTsType: returnType } = typeResult;
+  const compiledTs = toTs(method.returnType as string | Constructor);
+  const { compiled: returnType } = compiledTs;
   const isSerializable = module.constructor.prototype instanceof SerializableClass;
   const generics = sassert(method.generics && `<${method.generics.join(", ")}>`);
   const makeVoid = sassert(returnType === "void" && "void ");
@@ -32,7 +29,7 @@ export function methodCompiler(
   const buildOptionalFirstArgument = sassert(!areParams && " = {}");
   const buildedParams = method.params
     .sort(sortMethodParams)
-    .map((p) => paramCompiler(method, p, imports, options))
+    .map((p) => interfaceMemberCompiler(method, p, imports, options))
     .join("; ");
   const interfaceName = `${camelToPascal(methodName)}Params`;
   const output =
@@ -55,7 +52,7 @@ export function methodCompiler(
     return makeItUnwrappable(rpc<${returnType}, HttpError>(argument));
 }`;
 
-  pushTypeIfNeeded(typeResult, imports, options);
+  pushTypeIfNeeded(compiledTs, imports, options);
   interfaces.push(`interface ${interfaceName}{${buildedParams}}`);
 
   return output;

@@ -3,7 +3,7 @@ import type { Import } from "../interfaces/mod.ts";
 import { pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 import { toTs } from "../utils/to-ts.util.ts";
 
-export function paramCompiler(
+export function interfaceMemberCompiler(
   _method: MethodMetadata,
   parameter: ParameterMetadata,
   imports: Import[],
