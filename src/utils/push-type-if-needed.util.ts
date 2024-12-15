@@ -9,7 +9,7 @@ export function pushTypeIfNeeded(
   imports: Import[],
   options: CompilerOptions,
 ) {
-  if (compiledTs.type !== TsType.Native && !importContains(imports, compiledTs.dataType)) {
+  if (compiledTs.tsType !== TsType.Native && !importContains(imports, compiledTs.dataTypeName)) {
     pushImport(compiledTs, imports, options);
   }
 }

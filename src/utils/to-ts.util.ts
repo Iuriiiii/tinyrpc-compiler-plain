@@ -5,6 +5,7 @@ import { isArray, isString } from "@online/is";
 import { TsType } from "../enums/mod.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
 import { isClass } from "../validator/mod.ts";
+import { SerializableClass } from "@tinyrpc/server";
 
 const PRIMITIVES = new Map<unknown, string>([
   [Boolean, "boolean"],
@@ -33,15 +34,15 @@ const PRIMITIVES = new Map<unknown, string>([
 
 export function toTs(
   dataType: DataType,
-  response: ToTsResponse = { arrayLevel: 0, type: TsType.Native, compiled: "", dataType: "" },
+  response: ToTsResponse = { arrayLevel: 0, tsType: TsType.Native, compiled: "", dataTypeName: "" },
 ) {
   while (isArray(dataType)) {
     response.arrayLevel++;
 
     // @ts-ignore: Handle empty arrays
     if (dataType.length === 0) {
-      response.type = TsType.Native;
-      response.compiled = response.dataType = "never[]";
+      response.tsType = TsType.Native;
+      response.compiled = response.dataTypeName = "never[]";
 
       return response;
     }
@@ -55,29 +56,31 @@ export function toTs(
   }
 
   if (PRIMITIVES.has(dataType)) {
-    response.type = TsType.Native;
-    response.compiled = response.dataType = PRIMITIVES.get(dataType)!;
+    response.tsType = TsType.Native;
+    response.compiled = response.dataTypeName = PRIMITIVES.get(dataType)!;
   } else if (isClass(dataType)) {
     do {
       const constructorName = getConstructorName(dataType);
       const module = getModule(constructorName);
 
       if (module) {
-        response.type = TsType.Module;
-        response.compiled = response.dataType = constructorName;
+        response.tsType = TsType.Module;
+        response.compiled = response.dataTypeName = constructorName;
+        response.serializable = module.constructor instanceof SerializableClass;
         break;
       }
 
       const structure = getStructure(constructorName);
 
       if (structure) {
-        response.type = TsType.Structure;
-        response.compiled = response.dataType = constructorName;
+        response.tsType = TsType.Structure;
+        response.compiled = response.dataTypeName = constructorName;
+        response.serializable = structure.constructor instanceof SerializableClass;
         break;
       }
 
-      response.type = TsType.Native;
-      response.compiled = response.dataType = "never";
+      response.tsType = TsType.Native;
+      response.compiled = response.dataTypeName = "never";
     } while (false);
   } else if (dataType instanceof Function) {
     const _dataType = (<() => DataType> dataType)();
@@ -86,34 +89,44 @@ export function toTs(
   } else if (isString(dataType)) {
     // Improve this to analyse complex types and import required files if needed
     do {
+      const module = getModule(dataType);
+
+      if (module) {
+        response.tsType = TsType.Module;
+        response.compiled = response.dataTypeName = dataType;
+        response.serializable = module.constructor instanceof SerializableClass;
+        break;
+      }
+
       const structure = getStructure(dataType);
 
       if (structure) {
-        response.type = TsType.Structure;
-        response.compiled = response.dataType = dataType;
+        response.tsType = TsType.Structure;
+        response.compiled = response.dataTypeName = dataType;
+        response.serializable = structure.constructor instanceof SerializableClass;
         break;
       }
 
       const _enum = getEnum(dataType);
 
       if (_enum) {
-        response.type = TsType.Enum;
-        response.compiled = response.dataType = dataType;
+        response.tsType = TsType.Enum;
+        response.compiled = response.dataTypeName = dataType;
         break;
       }
 
       if (PRIMITIVES.has(dataType)) {
-        response.type = TsType.Native;
-        response.compiled = response.dataType = PRIMITIVES.get(dataType)!;
+        response.tsType = TsType.Native;
+        response.compiled = response.dataTypeName = PRIMITIVES.get(dataType)!;
         break;
       }
 
-      response.type = TsType.Native;
-      response.compiled = response.dataType = "never";
+      response.tsType = TsType.Native;
+      response.compiled = response.dataTypeName = "never";
     } while (false);
   } else if (isExposedEnum(dataType)) {
-    response.type = TsType.Enum;
-    response.compiled = response.dataType = getExposedEnumName(dataType)!;
+    response.tsType = TsType.Enum;
+    response.compiled = response.dataTypeName = getExposedEnumName(dataType)!;
   }
 
   response.compiled += "[]".repeat(response.arrayLevel);
