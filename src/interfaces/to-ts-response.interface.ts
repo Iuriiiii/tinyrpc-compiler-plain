@@ -1,5 +1,4 @@
 import type { TsType } from "../enums/mod.ts";
-import type { Constructor } from "../types/mod.ts";
 
 export interface ToTsResponse {
   arrayLevel: number;
