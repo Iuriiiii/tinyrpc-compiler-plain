@@ -1,8 +1,9 @@
 import type { TsType } from "../enums/mod.ts";
+import type { Constructor } from "../types/mod.ts";
 
 export interface ToTsResponse {
   arrayLevel: number;
-  type: TsType;
+  tsType: TsType;
   /**
    * The compiled expression.
    */
@@ -10,5 +11,7 @@ export interface ToTsResponse {
   /**
    * The datatype name
    */
-  dataType: string;
+  dataTypeName: string;
+
+  serializable?: boolean;
 }

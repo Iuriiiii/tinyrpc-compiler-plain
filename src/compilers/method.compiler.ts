@@ -5,6 +5,7 @@ import { SerializableClass } from "@tinyrpc/server";
 import { camelToPascal, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 import { interfaceMemberCompiler } from "./interface-member.compiler.ts";
 import { toTs } from "../utils/to-ts.util.ts";
+import { TsType } from "../enums/ts-type.enum.ts";
 
 function sortMethodParams(a: ParameterMetadata, b: ParameterMetadata) {
   return a.index - b.index;
@@ -29,8 +30,20 @@ export function methodCompiler(
   const buildOptionalFirstArgument = sassert(!areParams && " = {}");
   const buildedParams = method.params
     .sort(sortMethodParams)
-    .map((p) => interfaceMemberCompiler(method, p, imports, options))
+    .map((p) => interfaceMemberCompiler(method, p, imports, options));
+  const buildedParamAsMembers = buildedParams.map((p) => p.builded)
     .join("; ");
+
+  const args = method.params.map((p) => {
+    const build = interfaceMemberCompiler(method, p, imports, options);
+    const paramName = sassert(p.name, `p${p.index}`);
+    if ([TsType.Module, TsType.Structure].includes(build.compiledTs.tsType) && build.compiledTs.serializable) {
+      return `${paramName}: normalizeObject(${build.compiledTs.dataTypeName}, ${paramName})`;
+    }
+
+    return paramName;
+  }).join(", ");
+
   const interfaceName = `${camelToPascal(methodName)}Params`;
   const output =
     `${methodName}${generics}({${paramNames}}: ${interfaceName}${buildOptionalFirstArgument}, request: RequestBody = {}): Unwrappable<MethodResponse<${returnType}>, ${returnType}> {
@@ -39,21 +52,21 @@ export function methodCompiler(
         module: "${moduleName}",
         method: "${methodName}",
       },
-      args: { ${paramNames} },
+      args: { ${args} },
       updates: {
         parent: this,
         keys: ${JSON.stringify(links)} as unknown as MapStructure<object>,
       },
       request,
       context: ${!isSerializable ? "[]" : "this.serialize().arguments"},
-      makeVoid: ${!!makeVoid}
+      voidIt: ${!!makeVoid}
     };
 
     return makeItUnwrappable(rpc<${returnType}, HttpError>(argument));
 }`;
 
   pushTypeIfNeeded(compiledTs, imports, options);
-  interfaces.push(`interface ${interfaceName}{${buildedParams}}`);
+  interfaces.push(`interface ${interfaceName}{${buildedParamAsMembers}}`);
 
   return output;
 }

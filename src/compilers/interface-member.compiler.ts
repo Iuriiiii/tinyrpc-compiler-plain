@@ -2,6 +2,7 @@ import type { CompilerOptions, MethodMetadata, ParameterMetadata } from "@tinyrp
 import type { Import } from "../interfaces/mod.ts";
 import { pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 import { toTs } from "../utils/to-ts.util.ts";
+import { TsType } from "../enums/mod.ts";
 
 export function interfaceMemberCompiler(
   _method: MethodMetadata,
@@ -10,11 +11,13 @@ export function interfaceMemberCompiler(
   options: CompilerOptions,
 ) {
   const compiledTs = toTs(parameter.dataType);
-  const { compiled } = compiledTs;
+  const { compiled, tsType } = compiledTs;
   const makeOptional = sassert(parameter.optional && "?");
   const name = sassert(parameter.name, `p${parameter.index}`);
+  const isModuleOrStructure = tsType === TsType.Module || tsType === TsType.Structure;
+  const compiledType = sassert(isModuleOrStructure && `ClassOrInterface<${compiled}>`, compiled);
 
   pushTypeIfNeeded(compiledTs, imports, options);
 
-  return `${name}${makeOptional}:${compiled}`;
+  return { builded: `${name}${makeOptional}:${compiledType}`, preBuild: `${name}${makeOptional}`, compiledTs };
 }
