@@ -37,7 +37,10 @@ export function methodCompiler(
   const args = method.params.map((p) => {
     const build = interfaceMemberCompiler(method, p, imports, options);
     const paramName = sassert(p.name, `p${p.index}`);
-    if ([TsType.Module, TsType.Structure].includes(build.compiledTs.tsType) && build.compiledTs.serializable) {
+
+    if (build.compiledTs.tsType === TsType.Structure) {
+      return `${paramName}: normalizeObject(${build.compiledTs.dataTypeName}, ${paramName})`;
+    } else if (build.compiledTs.tsType === TsType.Module && build.compiledTs.serializable) {
       return `${paramName}: normalizeObject(${build.compiledTs.dataTypeName}, ${paramName})`;
     }
 
@@ -58,7 +61,7 @@ export function methodCompiler(
         keys: ${JSON.stringify(links)} as unknown as MapStructure<object>,
       },
       request,
-      context: ${!isSerializable ? "[]" : "this.serialize().arguments"},
+      context: ${!isSerializable ? "[]" : "this.serialize().arguments ?? []"},
       voidIt: ${!!makeVoid}
     };
 
