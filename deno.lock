@@ -37,7 +37,7 @@
     "jsr:@tinyrpc/server@~0.2.23": "0.2.23",
     "jsr:@tinyrpc/server@~0.2.24": "0.2.24",
     "jsr:@tinyrpc/server@~0.2.25": "0.2.25",
-    "jsr:@tinyrpc/server@~0.2.29": "0.2.29",
+    "jsr:@tinyrpc/server@~0.2.30": "0.2.30",
     "jsr:@tinyrpc/server@~0.2.5": "0.2.5",
     "jsr:@tinyrpc/server@~0.2.7": "0.2.7",
     "jsr:@tinyrpc/server@~0.2.8": "0.2.8",
@@ -368,8 +368,8 @@
         "jsr:@tinyrpc/sdk-core"
       ]
     },
-    "@tinyrpc/server@0.2.29": {
-      "integrity": "27d33be51896a2fe18060439429912e2218d7fa912d3a9f6889c29295ef27d15",
+    "@tinyrpc/server@0.2.30": {
+      "integrity": "5e2a4694c66e5729af0c24d79b6ef48556d0e104929bd09ce217b5087af5b802",
       "dependencies": [
         "jsr:@dx/reflect",
         "jsr:@online/is@0.0",
@@ -384,7 +384,7 @@
     "dependencies": [
       "jsr:@online/is@^0.0.2",
       "jsr:@std/assert@^1.0.9",
-      "jsr:@tinyrpc/server@~0.2.29"
+      "jsr:@tinyrpc/server@~0.2.30"
     ]
   }
 }
