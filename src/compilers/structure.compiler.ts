@@ -36,7 +36,7 @@ export function structureCompiler(
   const constructor = sassert(constructorParams.length > 0 && `constructor(${compiledConstructorParams}){super();}`);
 
   const output = `
-import { Serializable, SerializableClass, SerializedClass } from "@tinyrpc/sdk-core";
+import { Serializable, SerializableClass, SerializedClass, type RequireAtLeastOne } from "@tinyrpc/sdk-core";
 ${compiledImports}
 
 @Serializable()
@@ -45,7 +45,7 @@ export class ${name} extends SerializableClass {
 
   ${constructor}
 
-  public override serialize(): SerializedClass<typeof ${name}> {
+  public serialize(): RequireAtLeastOne<SerializedClass<typeof ${name}>> {
     return {
       arguments: [${constructorParamNames}],
       members: {${membersObject}}
