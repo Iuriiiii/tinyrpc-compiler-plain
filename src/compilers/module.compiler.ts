@@ -65,6 +65,7 @@ import {
   type ClassOrInterface,
   type RequireAtLeastOne,
   makeItUnwrappable,
+  normalizeObject,
   ${serializableImports}
 } from "@tinyrpc/sdk-core";
 ${compiledImports}
