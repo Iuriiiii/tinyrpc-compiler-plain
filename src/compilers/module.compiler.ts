@@ -44,7 +44,7 @@ export function moduleCompiler(module: ModuleMetadata, options: CompilerOptions)
   const serializableImports = sassert(isSerializable && "SerializableClass, type SerializedClass, Serializable");
   const serializableMethod = sassert(
     isSerializable && `
-  public override serialize(): SerializedClass<typeof ${moduleName}> {
+  serialize(): RequireAtLeastOne<SerializedClass<typeof ${moduleName}>> {
     return {
       arguments: [${constructorParamNames}],
       members: {${membersObject}}
@@ -63,6 +63,7 @@ import {
   MapStructure,
   type Unwrappable,
   type ClassOrInterface,
+  type RequireAtLeastOne,
   makeItUnwrappable,
   ${serializableImports}
 } from "@tinyrpc/sdk-core";
