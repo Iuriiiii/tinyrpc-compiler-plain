@@ -1,4 +1,4 @@
-import type { ServerMetadata } from "@tinyrpc/server/types";
+import type { ServerMetadata } from "../../../tinyrpc/types.ts";
 import { isString } from "@online/is";
 
 export function getEnum(value: object | string, instances: ServerMetadata) {

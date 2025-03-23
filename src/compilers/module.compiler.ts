@@ -1,5 +1,5 @@
-import { SerializableClass } from "@tinyrpc/server";
-import type { CompilerOptions, MethodMetadata, ModuleMetadata } from "@tinyrpc/server/types";
+import { SerializableClass } from "../../../tinyrpc/mod.ts";
+import type { CompilerOptions, MethodMetadata, ModuleMetadata } from "../../../tinyrpc/types.ts";
 import type { Import } from "../interfaces/mod.ts";
 import { memberCompiler } from "./member.compiler.ts";
 import { methodCompiler } from "./method.compiler.ts";

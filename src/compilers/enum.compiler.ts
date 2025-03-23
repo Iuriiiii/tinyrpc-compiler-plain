@@ -1,4 +1,4 @@
-import type { CompilerOptions, EnumMetadata } from "@tinyrpc/server/types";
+import type { CompilerOptions, EnumMetadata } from "../../../tinyrpc/types.ts";
 import { isNumber } from "@online/is";
 import { getEnumKeys } from "../utils/mod.ts";
 

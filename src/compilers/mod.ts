@@ -1,8 +1,9 @@
+import type { CompilerOptions } from "../../../tinyrpc/types.ts";
+import type { CompilerPlainOptions } from "../interfaces/mod.ts";
 import { formatFolder, randomString, toFilename, writeFile } from "../utils/mod.ts";
 import { moduleCompiler } from "./module.compiler.ts";
 import sdkDenoJson from "../assets/deno.json" with { type: "json" };
 import { structureCompiler } from "./structure.compiler.ts";
-import type { CompilerOptions } from "@tinyrpc/server/types";
 import { enumCompiler } from "./enum.compiler.ts";
 
 function createPackageFolder(path: string) {
@@ -14,7 +15,7 @@ function createPackageFolder(path: string) {
   Deno.mkdirSync(path);
 }
 
-export function compilePackage(options: CompilerOptions) {
+export function compilePackage(options: CompilerOptions, config?: CompilerPlainOptions) {
   const { structures, modules, enums } = options.metadata;
   const { server } = options;
   const {
@@ -108,8 +109,10 @@ export function compilePackage(options: CompilerOptions) {
     ].join("\n"),
   );
 
+  const customImports = config?.imports ?? {};
   sdkDenoJson.name = packageName.toLowerCase();
   sdkDenoJson.version = packageVersion;
+  sdkDenoJson.imports = { ...sdkDenoJson.imports, ...customImports };
 
   writeFile(
     `${path}/deno.json`,
