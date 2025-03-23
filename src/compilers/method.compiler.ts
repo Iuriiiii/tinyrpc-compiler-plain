@@ -1,7 +1,7 @@
-import type { CompilerOptions, MethodMetadata, ModuleMetadata, ParameterMetadata } from "@tinyrpc/server/types";
+import type { CompilerOptions, MethodMetadata, ModuleMetadata, ParameterMetadata } from "../../../tinyrpc/types.ts";
 import type { Import } from "../interfaces/mod.ts";
 import type { Constructor } from "../types/mod.ts";
-import { SerializableClass } from "@tinyrpc/server";
+import { SerializableClass } from "../../../tinyrpc/mod.ts";
 import { camelToPascal, pushTypeIfNeeded, sassert } from "../utils/mod.ts";
 import { interfaceMemberCompiler } from "./interface-member.compiler.ts";
 import { toTs } from "../utils/to-ts.util.ts";
@@ -27,6 +27,7 @@ export function methodCompiler(
   const makeVoid = sassert(returnType === "void" && "void ");
   const paramNames = method.params.map((p) => p.name!).reverse().join(", ");
   const areParams = method.params.length > 0;
+  // const isSingleParam = method.params.length === 1;
   const buildOptionalFirstArgument = sassert(!areParams && " = {}");
   const buildedParams = method.params
     .sort(sortMethodParams)

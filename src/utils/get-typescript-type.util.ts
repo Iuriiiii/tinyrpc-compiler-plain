@@ -1,4 +1,4 @@
-import type { DataType, ServerMetadata } from "@tinyrpc/server/types";
+import type { DataType, ServerMetadata } from "../../../tinyrpc/types.ts";
 import type { Constructor } from "../types/mod.ts";
 import type { GetTypescriptTypeResult } from "../interfaces/mod.ts";
 import { getStructure } from "./get-structure.util.ts";

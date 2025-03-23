@@ -1,4 +1,4 @@
-import type { CompilerOptions } from "@tinyrpc/server/types";
+import type { CompilerOptions } from "../../../tinyrpc/types.ts";
 import type { Import, ToTsResponse } from "../interfaces/mod.ts";
 import { toFilename } from "./to-filename.util.ts";
 import { TsType } from "../enums/mod.ts";

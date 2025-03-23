@@ -1,11 +1,11 @@
-import type { DataType } from "@tinyrpc/server/types";
+import type { DataType } from "../../../tinyrpc/types.ts";
 import type { ToTsResponse } from "../interfaces/mod.ts";
-import { getEnum, getExposedEnumName, getModule, getStructure, isExposedEnum } from "@tinyrpc/server/utils";
+import { getEnum, getExposedEnumName, getModule, getStructure, isExposedEnum } from "../../../tinyrpc/utils.ts";
 import { isArray, isString } from "@online/is";
 import { TsType } from "../enums/mod.ts";
 import { getConstructorName } from "./get-constructor-name.util.ts";
 import { isClass } from "../validator/mod.ts";
-import { SerializableClass } from "@tinyrpc/server";
+import { SerializableClass } from "../../../tinyrpc/mod.ts";
 
 const PRIMITIVES = new Map<unknown, string>([
   [Boolean, "boolean"],
@@ -19,6 +19,7 @@ const PRIMITIVES = new Map<unknown, string>([
   [Object, "object"],
   [Array, "Array<unknown>"],
   [Set, "Set<unknown>"],
+  [ReadableStream, "ReadableStream"],
   ["string", "string"],
   ["number", "number"],
   ["boolean", "boolean"],
@@ -30,6 +31,7 @@ const PRIMITIVES = new Map<unknown, string>([
   ["bigint", "bigint"],
   ["BigInt", "bigint"],
   ["Set", "Set<unknown>"],
+  ["ReadableStream", "ReadableStream"],
 ]);
 
 export function toTs(
